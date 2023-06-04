@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title></title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      tr button {
+        width: 100%;
+        height: 60px;
+        background-color: black;
+        color: white;
+        border: 5px line green;
+
+      }
+
+      tr input {
+        width: 98%;
+        height: 50px;
+        margin: auto;
+        font-size: large;
+        border-radius: 15px;
+        background-color: black;
+        color: white;
+        border: 5px line green;
+
+      }
+      span{
+        font-size: 8px;
+      }
+      h1 {
+        text-align: center;
+      }
+      table {
+        width: 40%;
+        border-radius: 15px;
+        border: 5px solid black;
+      }
+      @media screen and (max-width: 1000px) {
+        table {
+          width: 60%;
+          color: white;
+        }
+    }
+      @media screen and (max-width: 600px) {
+        table {
+          width: 90%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Calculator</h1>
+    
+      <table align="center" border="2px">
+        <tr>
+          <td colspan="5">
+            <input id="input" disabled type="text" name="input"/>
+          </td>
+        </tr>
+        <tr>
+          <td><button onclick="MS='';speechsynthesis('Memory Clear');">MC</button></td>
+          <td><button onclick="inputhandler(this)" value = '1' >1</button></td>
+          <td><button onclick="inputhandler(this)" value = '2' >2</button></td>
+          <td><button onclick="inputhandler(this)" value = '3' >3</button></td>
+          <td><button onclick="operatorhandler(this)" value = "+" >+</button></td>
+        </tr>
+        <tr>
+          <td><button onclick="mshandler()">MS</button></td>
+          <td><button onclick="inputhandler(this)" value = '4' >4</button></td>
+          <td><button onclick="inputhandler(this)" value = '5' >5</button></td>
+          <td><button onclick="inputhandler(this)" value = '6' >6</button></td>
+          <td><button onclick="operatorhandler(this)" value = "-" >-</button></td>
+
+        </tr>
+
+        <tr>
+          <td><button onclick="mrhandler()">MR</button></td>
+          <td><button onclick="inputhandler(this)" value = '7' >7</button></td>
+          <td><button onclick="inputhandler(this)" value = '8' >8</button></td>
+          <td><button onclick="inputhandler(this)" value = '9' >9</button></td>
+          <td><button onclick="operatorhandler(this)" value = "*" >X</button></td>
+        </tr>
+
+        <tr>
+          <td><button onclick="mplushandler()">M+</button></td>
+          <td><button onclick="plusminushandler()">+-</button></td>
+          <td><button onclick="inputhandler(this)" value = '0' >0</button></td>
+          <td><button onclick="equalhandler()">=</button></td>
+          <td><button onclick="operatorhandler(this)" value = "/" >/</button></td>
+        </tr>
+        <tr>
+          <td><button onclick="inversehandler()">1/X</button></td>
+          <td>
+            <button onclick="dothandler()" value=".">&#x2022 </button>
+          </td>
+          <td><button onclick="operatorhandler(this)" value = '**(2)' >x2</button></td>
+          <td><button onclick="operatorhandler(this)" value = '**(1/2)' >√</button></td>
+          <td><button onclick="clearhandler()">C</button></td>
+        </tr>
+      </table>   
+      
+      
+
+    <script>
+
+// For Screen Users
+      var MS;
+      var equal = false;
+      function clearhandler(){
+        MS = '';
+        document.getElementById('input').value = '';
+        speechsynthesis("Everything has been Cleared");
+      }
+      function mplushandler(){
+        speechsynthesis("Memory Plus");
+        let inputtext = document.getElementById('input').value;
+        let input = eval(inputtext);
+        let ms = eval(MS);
+        MS = input + ms;
+        document.getElementById('input').value = '';
+      }
+      function mrhandler(){
+        console.log(MS);
+        if(isNaN(MS)){
+          speechsynthesis("Memory is Empty");
+          return;
+        }
+        document.getElementById('input').value = document.getElementById('input').value + MS;
+        speechsynthesis("Memory Retrieved");
+        speechsynthesis(document.getElementById('input').value);
+      }
+      function mshandler(){
+        
+        let inputtext = document.getElementById('input').value;
+        let i = inputtext.length;
+        while(i>=0){
+          let char = inputtext.slice(i,i+1);          
+          if(char === '+' ||char === '-' ||char === '*' ||char === '/' ){
+            return;
+          }
+          i--;
+        }
+        MS = inputtext;
+        document.getElementById('input').value ='';  
+        speechsynthesis("Memory Stored");     
+      }
+      function plusminushandler(){
+        
+        let inputtext = document.getElementById('input').value;
+        let initialcharts = document.getElementById('input').value.slice(0,2);
+        let newstring = document.getElementById('input').value.slice(2);
+        if(initialcharts === '-(' ){
+          document.getElementById('input').value = '+(' + newstring;
+        }else if(initialcharts === '+('){
+          document.getElementById('input').value = '-(' + newstring;
+        }else{
+          document.getElementById('input').value = '-(' + inputtext + ')';
+        }
+        speechsynthesis("Plus Minus Button");
+      }
+      function inversehandler(){
+        try{
+
+        let input = document.getElementById('input').value;
+        if(input){
+        let newinput = '1/('+ input + ')';
+        document.getElementById('input').value = eval(newinput);
+                speechsynthesis("Inverse of x");
+        }else{
+                  speechsynthesis("Nothing to inverse"); 
+        }
+        }catch{
+            speechsynthesis("Error in calculation");
+            clearhandler();
+        }
+
+
+      }
+      function equalhandler(){
+        
+        let inputtext = document.getElementById('input').value;
+        if(inputtext == ""){
+          speechsynthesis("Nothing to calculate");
+          return;
+        }
+        try{
+          let result = eval( inputtext);
+          document.getElementById('input').value =  result;
+          if(document.getElementById('input').value[0] =="-")
+            speechsynthesis("Result is minus"+result)
+          else
+            speechsynthesis("Result is"+result);
+          equal = true;
+        }catch(err){
+          document.getElementById('input').value = "";
+          speechsynthesis("Error in calculation");
+        }
+      }
+      function dothandler(){
+        speechsynthesis("Dot");
+        let inputtext = document.getElementById('input').value;
+        let lastchar = inputtext.slice(-1);
+        if(lastchar === '.'){
+          document.getElementById('input').value = inputtext + '0';
+        }else{
+          let i = inputtext.length;
+          while(i>=0){
+            let char = inputtext.slice(i,i+1);
+            if(char === "."){
+              return;
+            }
+            else if(char === '+' ||char === '-' ||char === '*' ||char === '/' ){
+              if( lastchar === '+' ||lastchar === '-' ||lastchar === '*' ||lastchar === '/' ){
+                document.getElementById('input').value = inputtext + '0.0';
+              }else{
+                document.getElementById('input').value = inputtext + '.0';
+
+              }
+
+              return;
+            }
+            else if(char === ')' ){
+              return;
+            }
+            else{
+              i--;
+            }
+          }
+          document.getElementById('input').value = inputtext + '.0';
+        }
+      }
+      function operatorhandler(operator){
+        
+        let inputtext = document.getElementById('input').value;
+        let lastchar = inputtext.slice(-1); 
+        if(lastchar === '+' ||lastchar === '-' ||lastchar === '*' ||lastchar === '/' ){
+          if( operator.value === '+' || operator.value === '-' ||operator.value === '*' || operator.value === '/' ){
+            text = inputtext.slice(0, -1); 
+          }
+          else{
+            text = inputtext;
+          }
+        }
+        else if(lastchar === '.'){
+            text = inputtext + '0';        }
+        else{
+          text = inputtext;
+        }
+        document.getElementById('input').value = text + operator.value;
+        if(operator.value == '+')
+            speechsynthesis("plus")
+        else if(operator.value == '-')
+            speechsynthesis("minus")
+        else if(operator.value == "*")
+            speechsynthesis("multiply")
+        else if(operator.value == "/")
+            speechsynthesis("divide")
+        else if(operator.value == "**(2)")
+            speechsynthesis("square")
+        else if(operator.value == "**(1/2)")
+            speechsynthesis("square root")
+      }
+      function inputhandler(input) {
+        let inputtext = ""
+        if(equal == true){
+          document.getElementById('input').value = '';
+          equal = false;
+        }
+        else{
+        inputtext = document.getElementById('input').value;
+        }
+        if(inputtext[inputtext.length -2 ] == "." && inputtext[inputtext.length -1] == "0"){
+          inputtext = inputtext.slice(0, -1);
+        }
+
+        document.getElementById('input').value = inputtext + input.value;
+        speechsynthesis(input.value)
+    }
+
+    function speechsynthesis(inputtext){
+
+      let msg = new SpeechSynthesisUtterance(inputtext);
+      window.speechSynthesis.speak(msg);
+
+    }
+
+
+    // For Keyboard Users
+    document.addEventListener("keypress", (event) => {
+      console.log(event.key);
+        if(equal == true){
+          document.getElementById('input').value = '';
+          equal = false;
+        }
+      let inputtext = document.getElementById('input').value;
+        if(event.key == '+')
+            speechsynthesis("plus")
+        else if(event.key == '-')
+            speechsynthesis("minus")
+        else if(event.key == "*")
+            speechsynthesis("multiply")
+        else if(event.key == "/")
+            speechsynthesis("divide")
+        else if(event.key == "**(2)")
+            speechsynthesis("square")
+        else if(event.key == "**(1/2)")
+            speechsynthesis("square root")
+        else
+          speechsynthesis(event.key);
+      if(event.key != "="){
+        inputtext += event.key;
+        document.getElementById('input').value = inputtext;
+      }
+
+      if(event.key == "="){
+        try{
+          let result = eval( document.getElementById('input').value);
+          console.log(result);
+          document.getElementById('input').value =  result;
+          equal = true;
+          if(document.getElementById('input').value[0] =="-")
+            speechsynthesis("Result is minus"+result)
+          else
+            speechsynthesis("Result is"+result);
+        }catch{
+          document.getElementById('input').value = "";
+          speechsynthesis("Error in calculation");
+        }
+      }
+      if(event.key == "c"){
+        document.getElementById('input').value = "";
+        speechsynthesis("Clear");
+      }
+      if(event.key == "Space" || event.key == " " || event.key == 32 ){
+        handleMicClick()
+      }
+    });
+
+
+    // For Speech Users 
+    const synth = window.speechSynthesis;
+function handleMicClick() {
+  const recognition = new webkitSpeechRecognition(); // Create a new SpeechRecognition object
+  recognition.lang = "en-US"; // Set the language of the recognition
+  recognition.interimResults = false; // Set interim results to false, meaning the final result will be returned only
+  recognition.maxAlternatives = 1; // Set the maximum number of alternatives that can be returned
+
+  recognition.onresult = (event) => {
+    let result = event.results[0][0].transcript; // Get the transcript of the first alternative of the final result
+    result = eval(result.replace(/\s/g, "").substring(0, result.length - 1));
+    console.log(result); // Log the result to the console
+    synth.speak(new SpeechSynthesisUtterance(result));
+    document.getElementsByTagName("input")[0].value = result;
+  };
+
+  recognition.start();
+}
+
+
+    </script>
+  </body>
+</html>
